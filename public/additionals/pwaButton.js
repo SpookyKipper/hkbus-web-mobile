@@ -23,7 +23,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
     pwaButton.id = "install-pwa";
     pwaButton.innerHTML = "安裝";
 
-    const topBarSelector = '#root > div > div.MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.hkbus-3vko9u-MuiToolbar-root > div.MuiBox-root.hkbus-1glkq6a';
+    const topBarSelector = 'div.MuiBox-root.hkbus-1glkq6a';
 
     let prependToTopBar = () => {
         const topBar = document.querySelector(topBarSelector);
