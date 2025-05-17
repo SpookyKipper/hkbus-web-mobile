@@ -8,6 +8,6 @@ jobs:
     steps:
     - name: Nothing to do
       run: |
-        echo "::notice This will fail"
+        echo "This will fail"
         end of file
 
