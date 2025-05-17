@@ -1,5 +1,5 @@
 name: Sync gh-pages to www in cordova branch
-
+ 
 on:
   push:
     branches:
