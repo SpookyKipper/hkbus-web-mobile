@@ -18,7 +18,7 @@ jobs:
 
     - name: Build APK
       run: |
-        git submodule add -b gh-pages https://github.com/SpookyKipper/hk-independent-bus-eta/ www
+        git submodule add -f -b gh-pages https://github.com/SpookyKipper/hk-independent-bus-eta/ www
         sed -i 's/id="hk.spooky.hkbusapp"/id="hk.spooky.hkbusapp.dev"/' config.xml
         sed -i 's|<name>HKBus</name>|<name>HKBus (Dev)</name>|' config.xml
         npm install
