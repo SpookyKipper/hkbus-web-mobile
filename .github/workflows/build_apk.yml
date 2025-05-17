@@ -1,4 +1,4 @@
-name: This action is designed to fail
+name: Build Cordova Android APK (Release)
 on: 
   workflow_dispatch:
 jobs:
@@ -7,4 +7,7 @@ jobs:
 
     steps:
     - name: Nothing to do
-      run: print
+      run: |
+        echo "::notice This will fail"
+        end of file
+
