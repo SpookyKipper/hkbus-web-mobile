@@ -1,1 +1,26 @@
-/home/kipper/Documents/GitHub/hkbus-main/.github/workflows/build_apk.yml
+name: Build Cordova Android APK (Release)
+on: 
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main repo and submodules
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0  # fetch full history for checking commits in submodule
+
+    - name: Build APK
+      run: |
+        npm install
+        npx cordova platform add android 
+        npx cordova build --release android
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HKBus-Cordova-Unsigned.apk
+        path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+
