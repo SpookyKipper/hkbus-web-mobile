@@ -1,4 +1,4 @@
-name: Build Cordova Android APK (Release)
+name: This action is designed to fail
 on: 
   workflow_dispatch:
 jobs:
