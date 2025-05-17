@@ -1,10 +1,5 @@
 name: Build Cordova Android APK (Release)
 
-on:
-  push:
-    branches:
-      - cordova
-
 jobs:
   build:
     runs-on: ubuntu-latest
