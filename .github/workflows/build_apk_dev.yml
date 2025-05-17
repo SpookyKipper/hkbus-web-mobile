@@ -18,6 +18,8 @@ jobs:
 
     - name: Build APK
       run: |
+        sed -i 's/id="hk.spooky.hkbusapp"/id="hk.spooky.hkbusapp.dev"/' config.xml
+        sed -i 's|<name>HKBus</name>|<name>HKBus (Dev)</name>|' config.xml
         npm install
         npx cordova platform add android 
         npx cordova build android
