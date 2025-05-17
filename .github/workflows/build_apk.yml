@@ -1,5 +1,5 @@
 name: Build Cordova Android APK (Release)
-on: workflow_dispatch
+on: release
 jobs:
   build:
     runs-on: ubuntu-latest
