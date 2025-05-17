@@ -7,4 +7,4 @@ jobs:
 
     steps:
     - name: Nothing to do
-      run: |
+      run: print
