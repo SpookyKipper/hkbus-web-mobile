@@ -43,6 +43,7 @@ jobs:
       if: steps.check_submodule.outputs.submodule_changed == 'true'
       run: |
         npm install
+        npx cordova platform add android 
         npx cordova build android
 
     - name: Upload APK artifact
