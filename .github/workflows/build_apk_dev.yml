@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - cordova
+  workflow_run:
+    workflows: ['Build & Deploy']
+    types: [completed]
 
 jobs:
   build:
