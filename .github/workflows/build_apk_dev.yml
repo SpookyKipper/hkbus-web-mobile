@@ -5,8 +5,10 @@ on:
     branches:
       - cordova
   workflow_run:
-    workflows: ['Build & Deploy']
+    workflows: ["Build & Deploy"]
     types: [completed]
+    branches:
+      - 'main'
 
 jobs:
   build:
