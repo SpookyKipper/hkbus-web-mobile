@@ -9,6 +9,7 @@ on:
     types: [completed]
     branches:
       - 'main'
+      - 'master'
 
 jobs:
   build:
