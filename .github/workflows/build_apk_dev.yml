@@ -1,0 +1,41 @@
+name: Build Cordova Android APK (Debug)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cordova
+  workflow_run:
+    workflows: ["Build & Deploy"]
+    types: [completed]
+    branches:
+      - 'main'
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main repo and submodules
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        ref: 'cordova'
+        fetch-depth: 0  # fetch full history for checking commits in submodule
+
+    - name: Build APK
+      run: |
+        git submodule add -f -b gh-pages https://github.com/SpookyKipper/hk-independent-bus-eta/ www
+        sed -i 's/id="hk.spooky.hkbusapp"/id="hk.spooky.hkbusapp.dev"/' config.xml
+        sed -i 's|<name>HKBus</name>|<name>HKBus (Dev)</name>|' config.xml
+        npm install
+        npx cordova platform add android 
+        npx cordova build android
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HKBus-Cordova-Dev-DebugSigned.apk
+        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        
