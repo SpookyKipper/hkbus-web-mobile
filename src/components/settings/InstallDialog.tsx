@@ -22,7 +22,7 @@ interface InstallDialogProps {
 
 const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"PWA" | "App">("App");
+  const [tab, setTab] = useState<"PWA" | "App" | "HkbusApp">("App");
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ sx: dialogSx }}>
