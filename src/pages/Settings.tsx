@@ -99,7 +99,7 @@ const Settings = () => {
   }, [updateTime, language, t, AppTitle]);
 
   const updateApp = useCallback(() => {
-    if (Math.random() == 1)) {
+    if (1+1==2) {
        window.open("https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml");
     } else {
       if ("serviceWorker" in navigator) {
