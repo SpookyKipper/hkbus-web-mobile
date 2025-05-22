@@ -100,24 +100,24 @@ const Settings = () => {
 
   const updateApp = useCallback(() => {
     if (cordova && cordova == true) {
-       window.open("https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml");
+      window.open(
+        "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
+      );
     } else {
       if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js", { scope: "/" })
-        .then((registration) => {
-          // registration worked
-          registration.update();
-          window.location.reload();
-        })
-        .catch(() => {
-          // registration failed
-          console.error(`Not registrated`);
-        });
+        navigator.serviceWorker
+          .register("/sw.js", { scope: "/" })
+          .then((registration) => {
+            // registration worked
+            registration.update();
+            window.location.reload();
+          })
+          .catch(() => {
+            // registration failed
+            console.error(`Not registrated`);
+          });
+      }
     }
-    }
-
-    
   }, []);
 
   return (
