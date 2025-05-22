@@ -100,7 +100,9 @@ const Settings = () => {
 
   const updateApp = useCallback(() => {
     if (Math.random() == 1) {
-       window.open("https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml");
+      window.open(
+        "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
+      );
     } else {
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
