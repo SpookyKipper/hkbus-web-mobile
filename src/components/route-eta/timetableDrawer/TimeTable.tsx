@@ -68,7 +68,7 @@ const TimeTable = ({ routeId }: TimeTableProps) => {
                 ))}
             </ListItem>
           ))}
-      </List> 
+      </List>
       <Divider sx={{ width: "80%", my: 2 }} />
     </>
   );
