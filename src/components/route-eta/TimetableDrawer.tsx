@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TimeTable from "./timetableDrawer/TimeTable";
 import JourneyTimePanel from "./timetableDrawer/JourneyTimePanel";
+import RouteOffiicalUrlBtn from "./timetableDrawer/RouteOfficialUrlBtn";
 
 interface TimetableDrawerProps {
   routeId: string;
@@ -35,6 +36,7 @@ const TimetableDrawer = ({ routeId, open, onClose }: TimetableDrawerProps) => {
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={tabbarSx}>
         <Tab label={t("車程")} value="jt" />
         <Tab value="schedule" label={t("時間表")} />
+        <RouteOffiicalUrlBtn routeId={routeId} />
       </Tabs>
       {tab === "jt" && <JourneyTimePanel routeId={routeId} />}
       {tab === "schedule" && <TimeTable routeId={routeId} />}
