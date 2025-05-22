@@ -99,7 +99,10 @@ const Settings = () => {
   }, [updateTime, language, t, AppTitle]);
 
   const updateApp = useCallback(() => {
-    if ("serviceWorker" in navigator) {
+    if (cordova && cordova == true) {
+       window.open("https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml");
+    } else {
+      if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js", { scope: "/" })
         .then((registration) => {
@@ -112,6 +115,9 @@ const Settings = () => {
           console.error(`Not registrated`);
         });
     }
+    }
+
+    
   }, []);
 
   return (
