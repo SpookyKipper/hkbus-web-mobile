@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import RouteOffiicalUrlBtn from "../timetableDrawer/RouteOfficialUrlBtn";
 import { isHoliday } from "../../../timetable";
 import DbContext from "../../../context/DbContext";
 
@@ -70,8 +69,6 @@ const TimeTable = ({ routeId }: TimeTableProps) => {
             </ListItem>
           ))}
       </List>
-      <Divider sx={{ width: "80%", my: 2 }} />
-      <RouteOffiicalUrlBtn routeId={routeId} />
       <Divider sx={{ width: "80%", my: 2 }} />
     </>
   );
