@@ -215,11 +215,10 @@ const JourneyTimePanel = ({ routeId }: JourneyTimePanelProps) => {
           ))}
         </Stepper>
         <Divider sx={{ width: "80%", my: 2 }} />
-              <RouteOffiicalUrlBtn routeId={routeId} />
-              <Divider sx={{ width: "80%", my: 2 }} />
+        <RouteOffiicalUrlBtn routeId={routeId} />
+        <Divider sx={{ width: "80%", my: 2 }} />
       </Box>
     </Box>
-    
   );
 };
 

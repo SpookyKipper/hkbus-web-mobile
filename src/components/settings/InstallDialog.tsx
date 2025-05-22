@@ -29,7 +29,7 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
       <DialogTitle sx={titleSx}>{t("安裝步驟")}</DialogTitle>
       <DialogContent>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={tabbarSx}>
-                    <Tab value="App" label="App (OFFLINE)" />
+          <Tab value="App" label="App (OFFLINE)" />
 
           <Tab value="HkbusApp" label="App (ONLINE)" />
           <Tab value="PWA" label="PWA (Online)" />
@@ -65,8 +65,8 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
         )}
         {tab === "App" && (
           <>
-            <Box 
-              style={{ margin:"15px" }}
+            <Box
+              style={{ margin: "15px" }}
               onClick={() =>
                 window.open(
                   "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
