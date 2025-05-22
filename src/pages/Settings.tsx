@@ -99,25 +99,26 @@ const Settings = () => {
   }, [updateTime, language, t, AppTitle]);
 
   const updateApp = useCallback(() => {
-    if (cordova && cordova == true) {
-       window.open("https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml");
+    const isCordova = typeof cordova !== "undefined" && cordova; // safely check if cordova is defined
+    if (isCordova) {
+      window.open(
+        "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
+      );
     } else {
       if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js", { scope: "/" })
-        .then((registration) => {
-          // registration worked
-          registration.update();
-          window.location.reload();
-        })
-        .catch(() => {
-          // registration failed
-          console.error(`Not registrated`);
-        });
+        navigator.serviceWorker
+          .register("/sw.js", { scope: "/" })
+          .then((registration) => {
+            // registration worked
+            registration.update();
+            window.location.reload();
+          })
+          .catch(() => {
+            // registration failed
+            console.error(`Not registrated`);
+          });
+      }
     }
-    }
-
-    
   }, []);
 
   return (
