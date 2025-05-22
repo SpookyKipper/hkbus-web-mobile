@@ -15,7 +15,7 @@ function onDeviceReady() {
         }
     });
 
-
+    window.open = cordova.InAppBrowser.open;
 
 }
 
