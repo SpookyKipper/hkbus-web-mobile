@@ -20,6 +20,7 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
+import RouteOffiicalUrlBtn from "../timetableDrawer/RouteOfficialUrlBtn";
 import { useTranslation } from "react-i18next";
 import { fetchEstJourneyTime } from "hk-bus-eta";
 import {
@@ -213,8 +214,12 @@ const JourneyTimePanel = ({ routeId }: JourneyTimePanelProps) => {
             </Step>
           ))}
         </Stepper>
+        <Divider sx={{ width: "80%", my: 2 }} />
+              <RouteOffiicalUrlBtn routeId={routeId} />
+              <Divider sx={{ width: "80%", my: 2 }} />
       </Box>
     </Box>
+    
   );
 };
 

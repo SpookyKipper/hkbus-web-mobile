@@ -10,6 +10,7 @@ import {
   Tabs,
   Theme,
   Typography,
+  Button,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { IosShare, MoreVert } from "@mui/icons-material";
@@ -28,10 +29,12 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
       <DialogTitle sx={titleSx}>{t("安裝步驟")}</DialogTitle>
       <DialogContent>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={tabbarSx}>
-          <Tab value="App" label="App" />
-          <Tab value="PWA" label="PWA" />
+                    <Tab value="App" label="App (OFFLINE)" />
+
+          <Tab value="HkbusApp" label="App (ONLINE)" />
+          <Tab value="PWA" label="PWA (Online)" />
         </Tabs>
-        {tab === "App" && (
+        {tab === "HkbusApp" && (
           <Box sx={appBadgeSx}>
             <Box
               onClick={() =>
@@ -42,7 +45,7 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
             >
               <img
                 src="/img/google-play-badge.png"
-                alt="Install via Google Play"
+                alt="Install via Google Play (Original hkbus.app)"
               />
             </Box>
             <Box
@@ -55,11 +58,28 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
               <img
                 src="/img/app-store.svg"
                 style={{ margin: "6%", width: "88%" }}
-                alt="Install via App Store"
+                alt="Install via App Store (Original hkbus.app)"
               />
             </Box>
           </Box>
         )}
+        {tab === "App" && (
+          <>
+            <Box 
+              style={{ margin:"15px" }}
+              onClick={() =>
+                window.open(
+                  "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
+                )
+              }
+            >
+              <Button variant="outlined" size="small">
+                {"Install APK"}
+              </Button>
+            </Box>
+          </>
+        )}
+
         {tab === "PWA" && (
           <>
             <Box sx={sectionSx}>
