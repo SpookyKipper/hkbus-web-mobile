@@ -197,7 +197,7 @@ const Settings = () => {
             if (geoPermission === "granted") {
               updateGeoPermission("closed");
             } else {
-              updateGeoPermission("opening", () => {
+              updateGeoPermission("force-opening", () => {
                 setShowGeoPermissionDenied(true);
               });
             }
@@ -217,7 +217,8 @@ const Settings = () => {
             secondary={t(
               geoPermission === "granted"
                 ? "開啟"
-                : geoPermission === "opening"
+                : geoPermission === "opening" ||
+                    geoPermission === "force-opening"
                   ? "開啟中..."
                   : "關閉"
             )}
