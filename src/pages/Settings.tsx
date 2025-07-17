@@ -196,6 +196,11 @@ const Settings = () => {
             vibrate(vibrateDuration);
             if (geoPermission === "granted") {
               updateGeoPermission("closed");
+            } else if (
+              geoPermission === "force-opening" ||
+              geoPermission === "opening"
+            ) {
+              updateGeoPermission("closed");
             } else {
               updateGeoPermission("force-opening", () => {
                 setShowGeoPermissionDenied(true);
@@ -325,7 +330,7 @@ const Settings = () => {
         {!iOSRNWebView() ? (
           <ListItemButton
             component="a"
-            href={`https://t.me/hkbusapp`}
+            href={`https://t.me/+T245uB32DeNlNjJl`}
             target="_blank"
             onClick={() => {
               vibrate(vibrateDuration);
