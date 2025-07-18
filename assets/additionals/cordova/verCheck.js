@@ -192,11 +192,21 @@ function onDeviceReady() {
 
 
     function updateApp() {
+
+        Swal.fire({
+            title: "Downloading",
+            html: `<span id="progress">0% (0 Bytes done)</span>`,
+            showConfirmButton: false
+        });
+
+        function updateProgress(text) {
+            document.querySelector("#progress").innerHTML = text;
+        }
         const apkUrl = 'https://github.com/SpookyKipper/hkbus-web-mobile/releases/latest/download/HKBus-Release.apk';
         const options = {
-            onDownloadProgress: (progressEvent) => {
-                const percent = (progressEvent.loaded / progressEvent.total) * 100;
-                Swal.fire(`Download ${percent.toFixed(1)}%`);
+            onDownloadProgress: (e) => {
+                updateProgress('Downloading: ' + e.progress + '%',
+                    '(' + e.bytesWritten + ' Bytes / ' + e.bytes + ' Bytes)');
             }
         };
 
@@ -205,6 +215,12 @@ function onDeviceReady() {
             .then((response) => {
                 console.log('Downloaded APK to:', response.path);
                 // 2. Install the downloaded APK
+                Swal.fire({
+                    title: "Download Succeed",
+                    text: `Please click on Update`,
+                    icon: "info",
+                    showConfirmButton: false
+                });
                 return ApkUpdater.install();
             })
             .catch(err => console.error('Update error', err));
