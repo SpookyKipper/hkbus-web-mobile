@@ -16,6 +16,8 @@
     "cordova-android": "^14.0.1",
     "cordova-browser": "^7.0.0",
     "cordova-plugin-android-permissions": "^1.1.5",
+    "cordova-plugin-apkupdater": "^5.0.1",
+    "cordova-plugin-app-version": "^0.1.14",
     "cordova-plugin-geolocation": "^5.0.0",
     "cordova-plugin-inappbrowser": "^6.0.0"
   },
@@ -27,7 +29,9 @@
     "plugins": {
       "cordova-plugin-geolocation": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-inappbrowser": {}
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-app-version": {},
+      "cordova-plugin-apkupdater": {}
     }
   }
 }
