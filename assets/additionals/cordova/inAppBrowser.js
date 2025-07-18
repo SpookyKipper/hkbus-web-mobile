@@ -10,7 +10,7 @@ document.addEventListener('click', function (event) {
     console.log(event.target);
   // Check if the clicked element is an anchor or inside one
   const anchor = event.target.closest('a');
-  if (event.target.tagName == "A" && anchor && anchor.href) {
+  if (event.target.tagName == "A" && anchor && anchor.href && !anchor.href.includes("localhost")) {
     event.preventDefault(); // Cancel the default navigation
     cordova.InAppBrowser.open(anchor.href, '_blank'); // Open the link in a new tab/window
   }
