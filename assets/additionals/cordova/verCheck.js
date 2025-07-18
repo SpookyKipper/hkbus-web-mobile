@@ -205,8 +205,7 @@ function onDeviceReady() {
         const apkUrl = 'https://github.com/SpookyKipper/hkbus-web-mobile/releases/latest/download/HKBus-Release.apk';
         const options = {
             onDownloadProgress: (e) => {
-                updateProgress(e.progress + '%' +
-                    '(' + e.bytesWritten + ' Bytes / ' + e.bytes + ' Bytes)');
+                updateProgress(e.progress + '%' + ' (' + e.bytesWritten + ' Bytes / ' + e.bytes + ' Bytes)');
             }
         };
 
