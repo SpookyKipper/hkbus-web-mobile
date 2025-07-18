@@ -195,7 +195,7 @@ function onDeviceReady() {
 
         Swal.fire({
             title: "Downloading",
-            html: `<span id="progress">0% (0 Bytes done)</span>`,
+            html: `<span id="progress" style="color: #c7c7c7ff">0% (0 Bytes done)</span>`,
             showConfirmButton: false
         });
 
@@ -205,7 +205,7 @@ function onDeviceReady() {
         const apkUrl = 'https://github.com/SpookyKipper/hkbus-web-mobile/releases/latest/download/HKBus-Release.apk';
         const options = {
             onDownloadProgress: (e) => {
-                updateProgress('Downloading: ' + e.progress + '%',
+                updateProgress(e.progress + '%' +
                     '(' + e.bytesWritten + ' Bytes / ' + e.bytes + ' Bytes)');
             }
         };
