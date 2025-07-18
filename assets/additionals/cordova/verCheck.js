@@ -219,6 +219,7 @@ function onDeviceReady() {
                     title: "Download Succeed",
                     text: `Please click on Update`,
                     icon: "info",
+                    color: "#c7c7c7ff",
                     showConfirmButton: false
                 });
                 return ApkUpdater.install();
