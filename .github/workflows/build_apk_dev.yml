@@ -24,14 +24,20 @@ jobs:
         ref: 'cordova'
         fetch-depth: 0  # fetch full history for checking commits in submodule
 
-    - name: Build APK
+    - name: Copy required files
       run: |
-        git submodule add -f -b gh-pages https://github.com/SpookyKipper/hk-independent-bus-eta/ www
+        git submodule add -f -b gh-pages https://github.com/SpookyKipper/hk-independent-bus-eta/ www 
+        cp -R assets/additionals/ www/
         sed -i 's/id="hk.spooky.hkbusapp"/id="hk.spooky.hkbusapp.dev"/' config.xml
         sed -i 's|<name>HKBus</name>|<name>HKBus (Dev)</name>|' config.xml
+
+    - name: Install required packages
+      run: |
         npm install
         npx cordova platform add android 
-        npx cordova build android
+
+    - name: Build APK
+      run: npx cordova build android
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
