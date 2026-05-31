@@ -10,7 +10,6 @@ import {
   Tabs,
   Theme,
   Typography,
-  Button,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { IosShare, MoreVert } from "@mui/icons-material";
@@ -22,19 +21,17 @@ interface InstallDialogProps {
 
 const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"PWA" | "App" | "HkbusApp">("App");
+  const [tab, setTab] = useState<"PWA" | "App">("App");
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ sx: dialogSx }}>
       <DialogTitle sx={titleSx}>{t("安裝步驟")}</DialogTitle>
       <DialogContent>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={tabbarSx}>
-          <Tab value="App" label="App (OFFLINE)" />
-
-          <Tab value="HkbusApp" label="App (ONLINE)" />
-          <Tab value="PWA" label="PWA (Online)" />
+          <Tab value="App" label="App" />
+          <Tab value="PWA" label="PWA" />
         </Tabs>
-        {tab === "HkbusApp" && (
+        {tab === "App" && (
           <Box sx={appBadgeSx}>
             <Box
               onClick={() =>
@@ -45,7 +42,7 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
             >
               <img
                 src="/img/google-play-badge.png"
-                alt="Install via Google Play (Original hkbus.app)"
+                alt="Install via Google Play"
               />
             </Box>
             <Box
@@ -58,28 +55,11 @@ const InstallDialog = ({ open, handleClose }: InstallDialogProps) => {
               <img
                 src="/img/app-store.svg"
                 style={{ margin: "6%", width: "88%" }}
-                alt="Install via App Store (Original hkbus.app)"
+                alt="Install via App Store"
               />
             </Box>
           </Box>
         )}
-        {tab === "App" && (
-          <>
-            <Box
-              style={{ margin: "15px" }}
-              onClick={() =>
-                window.open(
-                  "https://github.com/SpookyKipper/hkbus-web-mobile/actions/workflows/build_apk.yml"
-                )
-              }
-            >
-              <Button variant="outlined" size="small">
-                {"Install APK"}
-              </Button>
-            </Box>
-          </>
-        )}
-
         {tab === "PWA" && (
           <>
             <Box sx={sectionSx}>

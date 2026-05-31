@@ -106,6 +106,10 @@ export interface AppState {
    * Range for home page nearby search
    */
   searchRange: number;
+  /**
+   * Is input currently being entered
+   */
+  isSearching: boolean;
 }
 
 interface AppContextValue extends AppState {
@@ -142,7 +146,8 @@ interface AppContextValue extends AppState {
   setFontSize: (fontSize: number) => void;
   importAppState: (appState: AppState) => void;
   setSearchRange: (searchRange: number) => void;
-
+  setIsSearching: (searching: boolean) => void;
+  openUrl: (url: string) => void;
   // for React Native Context
   setGeoPermission: (geoPermission: AppState["geoPermission"]) => void;
 }
@@ -267,6 +272,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       searchRange: JSON.parse(
         localStorage.getItem("searchRange") ?? `${DEFAULT_SEARCH_RANGE}`
       ),
+      isSearching: false,
     };
   };
   const geolocation = useRef<GeoLocation>(_geolocation);
@@ -299,9 +305,21 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   useEffect(() => {
     const onVisibilityChange = () => {
+      if (geoWatcherId.current) {
+        navigator.geolocation.clearWatch(geoWatcherId.current);
+        geoWatcherId.current = null;
+      }
+
       if (geoPermission === "granted") {
         try {
           if (window.iOSRNWebView === true) return;
+          navigator.geolocation.getCurrentPosition(
+            ({ coords: { latitude, longitude } }) => {
+              updateGeolocation({ lat: latitude, lng: longitude });
+            },
+            (err) => console.error("Fresh fix failed", err),
+            { enableHighAccuracy: true }
+          );
           const _geoWatcherId = navigator.geolocation.watchPosition(
             ({ coords: { latitude, longitude } }) => {
               updateGeolocation({ lat: latitude, lng: longitude });
@@ -356,18 +374,27 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       if (geoPermission === "opening" || geoPermission === "force-opening") {
         setGeoPermission(geoPermission);
         if (window.iOSRNWebView !== true) {
+          navigator.geolocation.getCurrentPosition(
+            ({ coords: { latitude, longitude } }) => {
+              updateGeolocation({ lat: latitude, lng: longitude });
+              console.log(latitude, longitude);
+              setGeoPermission("granted");
+            },
+            (err) => console.error("Fresh fix failed", err),
+            { enableHighAccuracy: true }
+          );
           geoWatcherId.current = navigator.geolocation.watchPosition(
             ({ coords: { latitude, longitude } }) => {
               updateGeolocation({ lat: latitude, lng: longitude });
               setGeoPermission("granted");
             },
-            () => {
+            (positionError: GeolocationPositionError) => {
+              console.log(positionError);
               setGeoPermission("denied");
               if (deniedCallback) deniedCallback();
             },
             { enableHighAccuracy: true }
           );
-          console.log(geoWatcherId.current);
         }
       } else if (geoWatcherId.current) {
         navigator.geolocation.clearWatch(geoWatcherId.current);
@@ -603,6 +630,30 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     );
   }, []);
 
+  const setIsSearching = useCallback((searching: boolean) => {
+    setStateRaw(
+      produce((state: State) => {
+        state.isSearching = searching;
+      })
+    );
+  }, []);
+
+  const openUrl = useCallback((url: string) => {
+    // @ts-expect-error harmonyBridger exists in Harmony OS only
+    if (typeof harmonyBridger !== "undefined") {
+      if (url.startsWith("/")) {
+        // @ts-expect-error harmonyBridger exists in Harmony OS only
+        harmonyBridger.openUrl(`https://${window.location.hostname}${url}`);
+      } else {
+        // @ts-expect-error harmonyBridger exists in Harmony OS only
+        harmonyBridger.openUrl(url);
+      }
+    } else {
+      console.log(url);
+      window.open(url, "_blank");
+    }
+  }, []);
+
   const calculateColorMode = useCallback(() => {
     if (state._colorMode === "light" || state._colorMode === "dark") {
       return state._colorMode;
@@ -658,6 +709,11 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         value: colorMode,
       })
     );
+    // @ts-expect-error harmonyBridger exists in Harmony OS only
+    if (typeof harmonyBridger !== "undefined") {
+      // @ts-expect-error harmonyBridger exists in Harmony OS only
+      harmonyBridger.setTheme(colorMode);
+    }
   }, [colorMode]);
 
   const importAppState = useCallback((appState: AppState) => {
@@ -783,6 +839,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       importAppState,
       setGeoPermission,
       setSearchRange,
+      setIsSearching,
+      openUrl,
     }),
     [
       state,
@@ -814,6 +872,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       importAppState,
       setGeoPermission,
       setSearchRange,
+      setIsSearching,
+      openUrl,
     ]
   );
 

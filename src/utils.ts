@@ -96,7 +96,7 @@ export const vibrate = (duration: number) => {
 };
 
 export const triggerShare = (url: string, title: string) => {
-  if (navigator.share) {
+  if (checkMobile() && navigator.share) {
     return navigator.share({ title, url });
   } else if (navigator.clipboard) {
     return navigator.clipboard.writeText(url);
@@ -104,24 +104,27 @@ export const triggerShare = (url: string, title: string) => {
   return new Promise((resolve) => resolve(""));
 };
 
-export const triggerShareImg = async (
-  base64Img: string,
-  title: string,
-  text: string
+export const getJoyYouFare = (
+  routeNo: string,
+  co: Company[],
+  fares: string[] | null,
+  idx: number
 ) => {
-  const blob = await fetch(base64Img).then((res) => res.blob());
-  const file = new File([blob], "hkbus.png", { type: blob.type });
-  if (navigator.share) {
-    return navigator.share({
-      title: title,
-      text: text,
-      files: [file],
-    });
-  } else if (navigator.clipboard) {
-    return navigator.clipboard.write([
-      new ClipboardItem({ "image/png": blob }),
-    ]);
+  if (
+    (routeNo.startsWith("A") ||
+      routeNo.startsWith("NA") ||
+      routeNo.startsWith("H") ||
+      routeNo.startsWith("P")) &&
+    (co.includes("ctb") || co.includes("kmb"))
+  ) {
+    // no JoyYou Fare for A-, NA-, H-, P- bus
+    return "";
   }
+  if (fares === null || !fares[idx]) return "";
+  const baseFare = parseFloat(fares[idx]);
+  if (baseFare < 2) return fares[idx];
+  if (baseFare < 10) return `2.0`;
+  return (Math.round(baseFare * 2) / 10).toFixed(1);
 };
 
 export const setSeoHeader = ({
@@ -156,19 +159,31 @@ export const setSeoHeader = ({
     .querySelector('link[rel="alternative"][hreflang="en"]')
     ?.setAttribute(
       "href",
-      "https://hkbus.app" + window.location.pathname.replace(`/${lang}`, "/en")
+      "https://hkbus.app" +
+        window.location.pathname
+          .replace(/\(/g, "%28")
+          .replace(/\)/g, "%29")
+          .replace(`/${lang}`, "/en")
     );
   document
     .querySelector('link[rel="alternative"][hreflang="zh-Hant"]')
     ?.setAttribute(
       "href",
-      "https://hkbus.app" + window.location.pathname.replace(`/${lang}`, "/zh")
+      "https://hkbus.app" +
+        window.location.pathname
+          .replace(/\(/g, "%28")
+          .replace(/\)/g, "%29")
+          .replace(`/${lang}`, "/zh")
     );
   document
     .querySelector('link[rel="alternative"][hreflang="x-default"]')
     ?.setAttribute(
       "href",
-      "https://hkbus.app" + window.location.pathname.replace(`/${lang}`, "/zh")
+      "https://hkbus.app" +
+        window.location.pathname
+          .replace(/\(/g, "%28")
+          .replace(/\)/g, "%29")
+          .replace(`/${lang}`, "/zh")
     );
   // facebook
   document
@@ -340,6 +355,8 @@ export const binarySearch = <T>(
 
 export const checkAppInstalled = () => {
   if (window.matchMedia("(display-mode: standalone)").matches) return true;
+  // @ts-expect-error harmonyBridger exists in Harmony OS only
+  if (typeof harmonyBridger !== "undefined") return true;
   // @ts-expect-error window.navigator.standalone exists in iOS only
   const standalone = window.navigator.standalone;
   const userAgent = window.navigator.userAgent.toLowerCase();
@@ -516,8 +533,8 @@ export const formatHandling = (
         .sort(([, a], [, b]) => (a < b ? -1 : 1))[0][0];
       return `${routeUrl}/${_stops.indexOf(stop as string)}`;
     })
-    .concat(Array(40).fill("")) // padding
-    .slice(0, 40)
+    .concat(Array(80).fill("")) // padding
+    .slice(0, 80)
     .join("|");
 };
 

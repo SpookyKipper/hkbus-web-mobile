@@ -124,6 +124,18 @@ export const ReactNativeContextProvider = ({
           },
         })
       );
+      // @ts-expect-error harmonyBridger is defined in the mobile app
+      if (typeof harmonyBridger !== "undefined") {
+        // @ts-expect-error harmonyBridger is defined in the mobile app
+        harmonyBridger
+          ?.toggleAlarm(stopId, stop.location)
+          .then((stopId: string) => {
+            setState((prev) => ({
+              ...prev,
+              alarmStopId: stopId,
+            }));
+          });
+      }
     },
     [stopList, t, language]
   );
