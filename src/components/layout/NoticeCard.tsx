@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import WarnIcon from "@mui/icons-material/Warning";
+import { useTranslation } from "react-i18next";
 import useLanguage from "../../hooks/useTranslation";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { iOSRNWebView } from "../../utils";
@@ -30,6 +31,7 @@ interface NoticeCardState {
 
 const NoticeCard = () => {
   const language = useLanguage();
+  const { t } = useTranslation();
   const [state, setState] = useState<NoticeCardState[]>([]);
   const [viewIdx, setViewIdx] = useState<number>(0);
   const [closeNoticeIds, setCloseNoticeIds] = useState<string[]>(
@@ -101,8 +103,13 @@ const NoticeCard = () => {
           value={viewIdx}
           onChange={(_, v) => setViewIdx(v)}
         >
-          {state.map((_, idx) => (
-            <Tab key={`notice-tab-${idx}`} label={""} value={idx} />
+          {state.map((notice, idx) => (
+            <Tab
+              key={`notice-tab-${idx}`}
+              aria-label={notice.content[language][0] ?? String(idx + 1)}
+              label={""}
+              value={idx}
+            />
           ))}
         </Tabs>
         <SwipeableViews
@@ -116,11 +123,7 @@ const NoticeCard = () => {
               <WarnIcon color="warning" />
               <Box onClick={handleClick(viewIdx)} sx={{ cursor: "pointer" }}>
                 {notice.content[language].map((v, idx) => (
-                  <Typography
-                    key={`_notice-${idx}`}
-                    variant="subtitle2"
-                    sx={{ height: "3.14em", overflowY: "auto" }}
-                  >
+                  <Typography key={`_notice-${idx}`} variant="subtitle2">
                     {v}
                   </Typography>
                 ))}
@@ -129,7 +132,11 @@ const NoticeCard = () => {
           ))}
         </SwipeableViews>
       </Box>
-      <IconButton size="small" onClick={closeNotice(state[viewIdx].id)}>
+      <IconButton
+        size="small"
+        aria-label={t("關閉通知")}
+        onClick={closeNotice(state[viewIdx].id)}
+      >
         <CloseIcon />
       </IconButton>
     </Paper>

@@ -29,12 +29,7 @@ import { DeviceOrientationPermission } from "react-world-compass";
 import useLanguage from "../hooks/useTranslation";
 
 type GeoPermission =
-  | "opening"
-  | "force-opening"
-  | "granted"
-  | "denied"
-  | "closed"
-  | null;
+  "opening" | "force-opening" | "granted" | "denied" | "closed" | null;
 
 export interface AppState {
   searchRoute: string;
@@ -164,6 +159,7 @@ const isGeoPermission = (input: unknown): input is GeoPermission => {
     input === "force-opening" ||
     input === "granted" ||
     input === "denied" ||
+    input === "closed" ||
     input === null
   );
 };
@@ -304,47 +300,80 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   }, []);
 
   useEffect(() => {
-    const onVisibilityChange = () => {
+    // Re-arm the geolocation watcher. Skipped while hidden (keeps GPS off in
+    // the background) and on the iOS RN WebView (location comes via the bridge).
+    const refreshGeoWatcher = () => {
       if (geoWatcherId.current) {
         navigator.geolocation.clearWatch(geoWatcherId.current);
         geoWatcherId.current = null;
       }
-
-      if (geoPermission === "granted") {
-        try {
-          if (window.iOSRNWebView === true) return;
-          navigator.geolocation.getCurrentPosition(
-            ({ coords: { latitude, longitude } }) => {
-              updateGeolocation({ lat: latitude, lng: longitude });
-            },
-            (err) => console.error("Fresh fix failed", err),
-            { enableHighAccuracy: true }
-          );
-          const _geoWatcherId = navigator.geolocation.watchPosition(
-            ({ coords: { latitude, longitude } }) => {
-              updateGeolocation({ lat: latitude, lng: longitude });
-            },
-            () => {},
-            { enableHighAccuracy: true }
-          );
-          geoWatcherId.current = _geoWatcherId;
-        } catch (e) {
-          console.error("cannot watch position", e);
-        }
+      if (
+        geoPermission !== "granted" ||
+        document.hidden ||
+        window.iOSRNWebView === true
+      ) {
+        return;
       }
+      try {
+        navigator.geolocation.getCurrentPosition(
+          ({ coords: { latitude, longitude } }) => {
+            updateGeolocation({ lat: latitude, lng: longitude });
+          },
+          (err) => console.error("Fresh fix failed", err),
+          { enableHighAccuracy: true }
+        );
+        const _geoWatcherId = navigator.geolocation.watchPosition(
+          ({ coords: { latitude, longitude } }) => {
+            updateGeolocation({ lat: latitude, lng: longitude });
+          },
+          () => {},
+          { enableHighAccuracy: true }
+        );
+        geoWatcherId.current = _geoWatcherId;
+      } catch (e) {
+        console.error("cannot watch position", e);
+      }
+    };
+
+    const setVisible = (visible: boolean) => {
+      // Update visibility independent of the geolocation branch, so ETA polling
+      // resumes even when the geo watcher early-returns (e.g. iOS RN WebView).
       setStateRaw(
         produce((state: State) => {
-          state.isVisible = !document.hidden;
+          state.isVisible = visible;
         })
       );
     };
+
+    const onVisibilityChange = () => {
+      const visible = !document.hidden;
+      refreshGeoWatcher();
+      setVisible(visible);
+    };
+
+    // Some Android WebViews (notably react-native-webview) do NOT reliably fire
+    // `visibilitychange` — nor update `document.hidden` — when the app returns
+    // from the background via the home button. Without an extra signal
+    // `isVisible` stays false, so useEtas/useStopEtas keep short-circuiting to
+    // empty and every ETA is stuck "loading". Treat focus / pageshow as an
+    // additional "app is in foreground" trigger to force polling to resume.
+    // Pair this with the native app dispatching `focus` on AppState "active".
+    const onResume = () => {
+      refreshGeoWatcher();
+      setVisible(true);
+    };
+
     onVisibilityChange();
-    window.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onResume);
+    window.addEventListener("pageshow", onResume);
     return () => {
-      if (geoPermission === "granted" && geoWatcherId.current) {
+      if (geoWatcherId.current) {
         navigator.geolocation.clearWatch(geoWatcherId.current);
       }
-      window.removeEventListener("visibilitychange", onVisibilityChange);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", onResume);
+      window.removeEventListener("pageshow", onResume);
     };
   }, [geoPermission, updateGeolocation]);
 
@@ -377,7 +406,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
           navigator.geolocation.getCurrentPosition(
             ({ coords: { latitude, longitude } }) => {
               updateGeolocation({ lat: latitude, lng: longitude });
-              console.log(latitude, longitude);
               setGeoPermission("granted");
             },
             (err) => console.error("Fresh fix failed", err),
@@ -649,7 +677,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         harmonyBridger.openUrl(url);
       }
     } else {
-      console.log(url);
       window.open(url, "_blank");
     }
   }, []);

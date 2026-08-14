@@ -71,7 +71,10 @@ const TimeTable = ({ routeId }: TimeTableProps) => {
           ))}
       </List>
       <Divider sx={{ width: "80%", my: 2 }} />
-      <RouteOffiicalUrlBtn routeId={routeId} />
+      <Box sx={{ mb: 6 }}>
+        <RouteOffiicalUrlBtn routeId={routeId} />
+      </Box>
+      <Box sx={{ paddingBottom: "env(safe-area-inset-bottom)" }} />
     </>
   );
 };

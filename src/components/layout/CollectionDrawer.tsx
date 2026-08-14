@@ -80,7 +80,8 @@ const rootSx: SxProps<Theme> = {
   display: "flex",
   flexDirection: "column",
   px: 2,
-  py: 1,
+  pt: 1,
+  pb: "calc(8px + env(safe-area-inset-bottom))",
 };
 
 const dividerSx: SxProps<Theme> = {

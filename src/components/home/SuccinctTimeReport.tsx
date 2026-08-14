@@ -1,5 +1,6 @@
 import {
   DeleteOutline as DeleteIcon,
+  MyLocation as NearestIcon,
   Reorder as ReorderIcon,
 } from "@mui/icons-material";
 import {
@@ -37,6 +38,7 @@ interface DistAndFareProps {
   faresHoliday: string[] | null;
   joyYouFare: string;
   seq: number;
+  isNearest: boolean;
 }
 
 const DistAndFare = ({
@@ -46,6 +48,7 @@ const DistAndFare = ({
   faresHoliday,
   joyYouFare,
   seq,
+  isNearest,
 }: DistAndFareProps) => {
   const { t } = useTranslation();
   const { geoPermission, geolocation, manualGeolocation } =
@@ -71,6 +74,9 @@ const DistAndFare = ({
 
   return (
     <>
+      {isNearest && (
+        <NearestIcon sx={nearestIconSx} titleAccess={t("最近車站")} />
+      )}
       {name +
         " - " +
         distance.toFixed(decimalPlace) +
@@ -86,6 +92,8 @@ interface SuccinctTimeReportProps {
   etas?: Eta[];
   mode?: ManageMode | "time";
   onDelete?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  // source list this row was drawn from; enables the nearest-following marker
+  nearestFrom?: string[];
 }
 
 const SuccinctTimeReport = ({
@@ -93,6 +101,7 @@ const SuccinctTimeReport = ({
   etas = undefined,
   mode = "time",
   onDelete = undefined,
+  nearestFrom = undefined,
 }: SuccinctTimeReportProps) => {
   const { t } = useTranslation();
   const language = useLanguage();
@@ -102,6 +111,10 @@ const SuccinctTimeReport = ({
   } = useContext(DbContext);
   const [routeNo] = routeId.split("-");
   const [routeKey, seq] = routeId.split("/");
+  // nearest-following ("star-the-line") row: its seq-less form is in the source
+  // list but the formatHandling-resolved routeKey/seq is not, unlike a pinned row
+  const src = nearestFrom ?? [];
+  const isNearest = src.includes(routeKey) && !src.includes(routeId);
   const { co, stops, dest, fares, faresHoliday, serviceType } =
     routeList[routeKey] || DEFAULT_ROUTE;
   const stopId = getStops(co, stops)[parseInt(seq, 10)];
@@ -175,6 +188,7 @@ const SuccinctTimeReport = ({
               faresHoliday={faresHoliday}
               joyYouFare={joyYouFare}
               seq={parseInt(seq, 10)}
+              isNearest={isNearest}
             />
           }
           secondaryTypographyProps={{
@@ -197,7 +211,10 @@ const SuccinctTimeReport = ({
         )}
         {mode === "edit" && (
           <Box sx={iconContainerSx}>
-            <IconButton onClick={(e) => onDelete && onDelete(e)}>
+            <IconButton
+              aria-label={t("移除")}
+              onClick={(e) => onDelete && onDelete(e)}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -241,6 +258,21 @@ const rootSx: SxProps<Theme> = {
   gridTemplateColumns: "15% 1fr minmax(18%, max-content)",
   padding: (theme) => `${theme.spacing(0.5)} ${theme.spacing(1)}`,
   color: "rgba(0,0,0,0.87)",
+  cursor: "pointer",
+  // Tap feedback in the brand yellow (#fedb00) so a press visibly responds
+  WebkitTapHighlightColor: "transparent",
+  transition: "background-color 0.12s ease-out",
+  "@media (hover: hover)": {
+    "&:hover": {
+      backgroundColor: "rgba(254, 219, 0, 0.06)",
+    },
+  },
+  "&:active": {
+    backgroundColor: "rgba(254, 219, 0, 0.1)",
+  },
+  "@media (prefers-reduced-motion: reduce)": {
+    transition: "none",
+  },
 };
 
 const routeDestSx: SxProps<Theme> = {
@@ -273,4 +305,10 @@ const specialTripSx: SxProps<Theme> = {
   color: (theme) => theme.palette.text.secondary,
   fontSize: "0.6rem",
   marginLeft: "8px",
+};
+
+const nearestIconSx: SxProps<Theme> = {
+  fontSize: "1rem",
+  verticalAlign: "text-bottom",
+  marginRight: "2px",
 };
